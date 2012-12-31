@@ -1,0 +1,10 @@
+{
+  "name": "angular-collab-board",
+  "description": "AngularJS Collobaration Board",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "express": "3.x",
+    "socket.io": ">= 0.9.6"
+  }
+}
