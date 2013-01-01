@@ -15,7 +15,10 @@ app.directive('stickyNote', function(socket) {
 			socket.on('onNoteMoved', function(data) {
 				// Update if the same note
 				if(data.id == scope.note.id) {
-					element.animate({ left: data.x, top: data.y });
+					element.animate({
+						left: data.x,
+						top: data.y
+					});
 				}
 			});
 
@@ -26,25 +29,29 @@ app.directive('stickyNote', function(socket) {
 		};
 
 	var controller = function($scope) {
-		$scope.updateNote = function(note) {
-			socket.emit('updateNote', note);
-		};
+			$scope.updateNote = function(note) {
+				socket.emit('updateNote', note);
+			};
 
-		$scope.deleteNote = function(id) {
-			// Delete remote instances
-			socket.emit('deleteNote', { id:id });
-			// Delete local instance
-			$scope.ondelete({id:id});
+			$scope.deleteNote = function(id) {
+				// Delete remote instances
+				socket.emit('deleteNote', {
+					id: id
+				});
+				// Delete local instance
+				$scope.ondelete({
+					id: id
+				});
+			};
 		};
-	};
 
 	return {
 		restrict: 'A',
 		link: linker,
 		controller: controller,
-		scope: { 
-			note:'=',
-			ondelete:'&'
+		scope: {
+			note: '=',
+			ondelete: '&'
 		}
 	};
 });
@@ -73,49 +80,49 @@ app.factory('socket', function($rootScope) {
 	};
 });
 
-var MainCtrl = function($scope, socket) {
-		$scope.notes = [];
+app.controller('MainCtrl', function($scope, socket) {
+	$scope.notes = [];
 
-		// Incoming
-		socket.on('onNoteCreated', function(data) {
-			$scope.notes.push(data);
+	// Incoming
+	socket.on('onNoteCreated', function(data) {
+		$scope.notes.push(data);
+	});
+
+	socket.on('onNoteUpdated', function(data) {
+		var updatedNote = _.find($scope.notes, function(item) {
+			return item.id == data.id;
 		});
 
-		socket.on('onNoteUpdated', function(data) {
-			var updatedNote = _.find($scope.notes, function(item) {
-				return item.id == data.id;
-			});
+		if(typeof(updatedNote) != "undefined") {
+			updatedNote.title = data.title;
+			updatedNote.body = data.body;
+		}
+	});
 
-			if(typeof(updatedNote) != "undefined") {
-				updatedNote.title = data.title;
-				updatedNote.body = data.body;
-			}
-		});
+	socket.on('onNoteDeleted', function(data) {
+		$scope.deleteNote(data.id);
+	});
 
-		socket.on('onNoteDeleted', function(data) {
-			$scope.deleteNote(data.id);
-		});		
-
-		// Outgoing
-		$scope.createNote = function() {
-			var note = {
-				id: new Date().getTime(),
-				title: 'New Note',
-				body: 'Pending'
-			};
-
-			$scope.notes.push(note);
-			socket.emit('createNote', note);
+	// Outgoing
+	$scope.createNote = function() {
+		var note = {
+			id: new Date().getTime(),
+			title: 'New Note',
+			body: 'Pending'
 		};
 
-		$scope.deleteNote = function(id) {
-            var oldNotes = $scope.notes,
-            	newNotes = [];
-
-            angular.forEach(oldNotes, function (note) {
-                if (note.id !== id) newNotes.push(note);
-            });
-
-            $scope.notes = newNotes;			
-		}
+		$scope.notes.push(note);
+		socket.emit('createNote', note);
 	};
+
+	$scope.deleteNote = function(id) {
+		var oldNotes = $scope.notes,
+			newNotes = [];
+
+		angular.forEach(oldNotes, function(note) {
+			if(note.id !== id) newNotes.push(note);
+		});
+
+		$scope.notes = newNotes;
+	};
+});
