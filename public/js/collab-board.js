@@ -86,7 +86,6 @@ app.controller('MainCtrl', function($scope, socket) {
 	// Incoming
 	socket.on('onNoteCreated', function(data) {
 		$scope.notes.push(data);
-		console.log('ON NOTE CREATED');
 	});
 
 	socket.on('onNoteUpdated', function(data) {
