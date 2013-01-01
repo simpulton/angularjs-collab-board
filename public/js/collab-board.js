@@ -57,7 +57,7 @@ app.directive('stickyNote', function(socket) {
 });
 
 app.factory('socket', function($rootScope) {
-	var socket = io.connect('http://192.168.1.109');
+	var socket = io.connect();
 	return {
 		on: function(eventName, callback) {
 			socket.on(eventName, function() {
@@ -86,6 +86,7 @@ app.controller('MainCtrl', function($scope, socket) {
 	// Incoming
 	socket.on('onNoteCreated', function(data) {
 		$scope.notes.push(data);
+		console.log('ON NOTE CREATED');
 	});
 
 	socket.on('onNoteUpdated', function(data) {
