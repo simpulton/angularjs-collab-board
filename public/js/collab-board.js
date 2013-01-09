@@ -29,6 +29,16 @@ app.directive('stickyNote', function(socket) {
 		};
 
 	var controller = function($scope) {
+			// Incoming
+			socket.on('onNoteUpdated', function(data) {
+				// Update if the same note
+				if(data.id == scope.note.id) {
+					note.title = data.title;
+					note.body = data.body;
+				}				
+			});
+
+			// Outgoing
 			$scope.updateNote = function(note) {
 				socket.emit('updateNote', note);
 			};
@@ -86,19 +96,6 @@ app.controller('MainCtrl', function($scope, socket) {
 	// Incoming
 	socket.on('onNoteCreated', function(data) {
 		$scope.notes.push(data);
-	});
-
-	socket.on('onNoteUpdated', function(data) {
-		var updatedNote;
-
-		angular.forEach($scope.notes, function(note) {
-			if(note.id === data.id) updatedNote = note;
-		});
-		
-		if(typeof(updatedNote) != "undefined") {
-			updatedNote.title = data.title;
-			updatedNote.body = data.body;
-		}
 	});
 
 	socket.on('onNoteDeleted', function(data) {
