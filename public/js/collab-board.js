@@ -89,10 +89,12 @@ app.controller('MainCtrl', function($scope, socket) {
 	});
 
 	socket.on('onNoteUpdated', function(data) {
-		var updatedNote = _.find($scope.notes, function(item) {
-			return item.id == data.id;
-		});
+		var updatedNote;
 
+		angular.forEach($scope.notes, function(note) {
+			if(note.id === data.id) updatedNote = note;
+		});
+		
 		if(typeof(updatedNote) != "undefined") {
 			updatedNote.title = data.title;
 			updatedNote.body = data.body;
