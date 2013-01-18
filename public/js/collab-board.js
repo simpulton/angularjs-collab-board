@@ -44,11 +44,6 @@ app.directive('stickyNote', function(socket) {
 			};
 
 			$scope.deleteNote = function(id) {
-				// Delete remote instances
-				socket.emit('deleteNote', {
-					id: id
-				});
-				// Delete local instance
 				$scope.ondelete({
 					id: id
 				});
@@ -123,5 +118,6 @@ app.controller('MainCtrl', function($scope, socket) {
 		});
 
 		$scope.notes = newNotes;
+		socket.emit('deleteNote', {id: id});
 	};
 });
