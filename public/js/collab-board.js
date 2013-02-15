@@ -16,8 +16,8 @@ app.directive('stickyNote', function(socket) {
 				// Update if the same note
 				if(data.id == scope.note.id) {
 					element.animate({
-						left: data.x,
-						top: data.y
+						left: data.x * 2,
+						top: data.y * 2
 					});
 				}
 			});
@@ -32,9 +32,9 @@ app.directive('stickyNote', function(socket) {
 			// Incoming
 			socket.on('onNoteUpdated', function(data) {
 				// Update if the same note
-				if(data.id == scope.note.id) {
-					note.title = data.title;
-					note.body = data.body;
+				if(data.id == $scope.note.id) {
+					$scope.note.title = data.title;
+					$scope.note.body = data.body;
 				}				
 			});
 
