@@ -16,8 +16,8 @@ app.directive('stickyNote', function(socket) {
 				// Update if the same note
 				if(data.id == scope.note.id) {
 					element.animate({
-						left: data.x * 2,
-						top: data.y * 2
+						left: data.x,
+						top: data.y
 					});
 				}
 			});
@@ -94,7 +94,7 @@ app.controller('MainCtrl', function($scope, socket) {
 	});
 
 	socket.on('onNoteDeleted', function(data) {
-		$scope.deleteNote(data.id);
+		$scope.handleDeletedNoted(data.id);
 	});
 
 	// Outgoing
@@ -110,14 +110,21 @@ app.controller('MainCtrl', function($scope, socket) {
 	};
 
 	$scope.deleteNote = function(id) {
+		$scope.handleDeletedNoted(id);
+
+		socket.emit('deleteNote', {id: id});
+	};
+
+	$scope.handleDeletedNoted = function(id) {
+		console.log('HANDLE DELETE FIRED', id);
+
 		var oldNotes = $scope.notes,
-			newNotes = [];
+		newNotes = [];
 
 		angular.forEach(oldNotes, function(note) {
 			if(note.id !== id) newNotes.push(note);
 		});
 
 		$scope.notes = newNotes;
-		socket.emit('deleteNote', {id: id});
-	};
+	}
 });
