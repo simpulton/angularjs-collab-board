@@ -116,8 +116,6 @@ app.controller('MainCtrl', function($scope, socket) {
 	};
 
 	$scope.handleDeletedNoted = function(id) {
-		console.log('HANDLE DELETE FIRED', id);
-
 		var oldNotes = $scope.notes,
 		newNotes = [];
 
