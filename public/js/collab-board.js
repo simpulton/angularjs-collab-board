@@ -94,7 +94,14 @@ app.controller('MainCtrl', function($scope, socket) {
 	});
 
 	socket.on('onNoteDeleted', function(data) {
-		$scope.deleteNote(data.id);
+    var oldNotes = $scope.notes,
+      newNotes = [];
+
+    angular.forEach(oldNotes, function(note) {
+      if(note.id !== data.id) newNotes.push(note);
+    });
+
+    $scope.notes = newNotes;
 	});
 
 	// Outgoing
