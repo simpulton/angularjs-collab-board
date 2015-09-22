@@ -3,9 +3,7 @@ var express = require('express'),
 	server = require('http').createServer(app),
 	io = require('socket.io').listen(server);
 
-app.configure(function() {
-    app.use(express.static(__dirname + '/public'));
-});
+app.use(express.static(__dirname + '/public'));
 
 io.sockets.on('connection', function(socket) {
 	socket.on('createNote', function(data) {
